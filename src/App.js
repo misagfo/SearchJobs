@@ -1,24 +1,34 @@
-import logo from './logo.svg';
+import React from 'react'
 import './App.css';
+import fetchJobs from './FetchJobs'
+import Jobs from './Jobs'
+import Pages from './Pages'
+import FormSearch from './FormSearch'
+import { Container } from 'react-bootstrap'
+
 
 function App() {
+  const [params, setParams] = React.useState({})
+  const [page, setPage] = React.useState(1)
+
+  const handleChange = (e) => {
+     const param = e.target.name
+     const value = e.target.value
+     setPage(1)
+     setParams(prevParams => {
+         return  {...prevParams, [param]: value }
+      })
+  }
+
+  const { jobs, nextPage } = fetchJobs(params, page)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <h1>Git Hub Jobs</h1>
+      <FormSearch params={params} paramChange={handleChange}/>
+      {jobs.map(job => <Jobs key={job.id} jobs={job}/> )}
+      {jobs.length > 50 ? <Pages page={page} setPage={setPage} nextPage={nextPage}/> : null} 
+    </Container>
   );
 }
 
